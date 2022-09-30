@@ -28,6 +28,7 @@
             <CheckBox Name="channel2Checkbox" Grid.Column="1" Margin="304,49,241,296" IsEnabled="False" Checked="channel2Checkbox_Checked" Unchecked="channel2Checkbox_Unchecked"/>
             <Label Grid.Column="1" Margin="321,43,182,297" Content="channel2"/>
             <WpfPlot Name="audioPlot" Margin="0,72,0,0" Grid.Column="0" Grid.ColumnSpan="2"/>
+            <Label Name="loadTimeLabel" Grid.Column="1" Margin="379,345,0,-11" Foreground="Red"></Label>
         </Grid>
     </Border>
 

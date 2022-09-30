@@ -3,6 +3,7 @@ using NAudio.Wave;
 using ScottPlot.Plottable;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -53,6 +54,7 @@ namespace Lab1
             if (openFileDialog.ShowDialog() == true)
             {
                 audioPlot.Reset();
+                loadTimeLabel.Content = "";
                 channel1Checkbox.IsEnabled = false;
                 channel2Checkbox.IsEnabled = false;
                 channel1Checkbox.IsChecked = false;
@@ -78,6 +80,11 @@ namespace Lab1
                 List<double> channel1Ys = new();
                 List<double> channel2Ys = new();
                 int maxAudioPlotYValue = (int)Math.Round(Math.Pow(2.0, reader.WaveFormat.BitsPerSample - 1));
+
+                /* LOAD BEGIN */
+                Stopwatch loadStopwatch = new Stopwatch();
+                loadStopwatch.Start();
+
                 while (reader.Position < reader.Length)
                 {
                     float[] sampleFrame = reader.ReadNextSampleFrame();
@@ -134,6 +141,10 @@ namespace Lab1
                 }
 
                 audioPlot.Refresh();
+
+                /* LOAD END*/
+                loadStopwatch.Stop();
+                loadTimeLabel.Content = $"Loaded in {loadStopwatch.Elapsed.TotalSeconds} seconds";
             }
         }
 
@@ -192,22 +203,20 @@ namespace Lab1
 
         private double ConvertTimeUnit(double time, TimeUnit from, TimeUnit to)
         {
-            double timeMultiplier = 1;
-
             if (from == TimeUnit.Milliseconds && to == TimeUnit.Seconds)
-                timeMultiplier = 0.001d;
+                return TimeSpan.FromMilliseconds(time).TotalSeconds;
             else if (from == TimeUnit.Milliseconds && to == TimeUnit.Minutes)
-                timeMultiplier = 0.001d / 60;
+                return TimeSpan.FromMilliseconds(time).TotalMinutes;
             else if (from == TimeUnit.Seconds && to == TimeUnit.Milliseconds)
-                timeMultiplier = 1000;
+                return TimeSpan.FromSeconds(time).TotalMilliseconds;
             else if (from == TimeUnit.Seconds && to == TimeUnit.Minutes)
-                timeMultiplier = 1d / 60;
+                return TimeSpan.FromSeconds(time).TotalMinutes;
             else if (from == TimeUnit.Minutes && to == TimeUnit.Milliseconds)
-                timeMultiplier = 1000 * 60;
+                return TimeSpan.FromMinutes(time).TotalMilliseconds;
             else if (from == TimeUnit.Minutes && to == TimeUnit.Seconds)
-                timeMultiplier = 60;
+                return TimeSpan.FromMinutes(time).TotalSeconds;
 
-            return time * timeMultiplier;
+            return time;
         }
 
         private void RemoveTimeMarkerLine()
